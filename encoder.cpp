@@ -10,7 +10,9 @@
 Encoder::Encoder(TIM_HandleTypeDef *htim){
 	tim = htim;
 	preRawCount = 0;
-	preRawCount = 0;
+	curRawCount = 0;
+	startFlag = 0;
+	count = 0;
 }
 
 void Encoder::init(){
@@ -29,7 +31,7 @@ void Encoder::start(){
 }
 
 void Encoder::stop(){
-	HAL_TIMEncoder_Stop(tim,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Stop(tim,TIM_CHANNEL_ALL);
 	__HAL_TIM_SET_COUNTER(tim , 0);
 	update();
 	startFlag = 0;
@@ -37,7 +39,6 @@ void Encoder::stop(){
 
 void Encoder::update() {
 
-	pre_count = count;
 	preRawCount = curRawCount;
 
 	if (__HAL_TIM_GET_FLAG(tim, TIM_FLAG_UPDATE)) {
@@ -59,11 +60,11 @@ void Encoder::update() {
 	}
 }
 
-int32_t Encoder::get_count() {
+int32_t Encoder::getCount() {
 	return count;
 }
 
-void resetCount(){
+void Encoder::resetCount(){
 	update();
 	count = 0;
 }
