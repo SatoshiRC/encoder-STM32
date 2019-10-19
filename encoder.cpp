@@ -2,16 +2,18 @@
  * encoder.cpp
  *
  *  Created on: 2018/09/03
- *      Author: Sekiguchi Takuya
+ *      Author: Sekiguchi Takuy
+ *  changed on:2019/10
+ *     changer: Satoshi Ohya
  */
 
 #include "encoder.hpp"
 
 Encoder::Encoder(TIM_HandleTypeDef *htim){
 	tim = htim;
-	preRawCount = 0;
-	curRawCount = 0;
 	startFlag = 0;
+	preRawCount = 0;
+	preRawCount = 0;
 	count = 0;
 }
 
@@ -31,7 +33,7 @@ void Encoder::start(){
 }
 
 void Encoder::stop(){
-	HAL_TIM_Encoder_Stop(tim,TIM_CHANNEL_ALL);
+	HAL_TIMEncoder_Stop(tim,TIM_CHANNEL_ALL);
 	__HAL_TIM_SET_COUNTER(tim , 0);
 	update();
 	startFlag = 0;
@@ -39,6 +41,7 @@ void Encoder::stop(){
 
 void Encoder::update() {
 
+	pre_count = count;
 	preRawCount = curRawCount;
 
 	if (__HAL_TIM_GET_FLAG(tim, TIM_FLAG_UPDATE)) {
@@ -64,7 +67,7 @@ int32_t Encoder::getCount() {
 	return count;
 }
 
-void Encoder::resetCount(){
+void resetCount(){
 	update();
 	count = 0;
 }
