@@ -23,8 +23,9 @@ void Encoder::init(){
 
 void Encoder::start(){
 	int16_t tmpCount = count;
-	if(startFlag != 1)
+	if(startFlag == 0){
 		HAL_TIM_Encoder_Start(tim,TIM_CHANNEL_ALL);
+	}
 	__HAL_TIM_CLEAR_FLAG(tim, TIM_CHANNEL_ALL);
 	__HAL_TIM_SET_COUNTER(tim , 0);
 	startFlag = 1;
@@ -33,13 +34,17 @@ void Encoder::start(){
 }
 
 void Encoder::stop(){
-	HAL_TIM_Encoder_Stop(tim,TIM_CHANNEL_ALL);
-	__HAL_TIM_SET_COUNTER(tim , 0);
 	update();
+	if(startFlag == 1){
+		HAL_TIM_Encoder_Stop(tim,TIM_CHANNEL_ALL);
+	}
+	__HAL_TIM_CLEAR_FLAG(tim, TIM_CHANNEL_ALL);
+	__HAL_TIM_SET_COUNTER(tim , 0);
 	startFlag = 0;
 }
 
 void Encoder::update() {
+	if(startFlag == 0) return;
 
 	preRawCount = curRawCount;
 
@@ -62,7 +67,7 @@ void Encoder::update() {
 	}
 }
 
-int32_t Encoder::getCount() {
+int32_t Encoder::getCount(){
 	return count;
 }
 
