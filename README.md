@@ -3,6 +3,14 @@
 
 ---
 # CubeMXでの設定
+## Pinout
+   TIMx の**Conbined Channel**を**Encoder Mode**にする。  使用するピンを設定する(写真ではPC6,PC7をしよう)
+   ![Pinout](./Picture/Pinout.png)
+##Configration
+**CounterPeriod**を適当に設定する。(e.g.)PWMで設定した値にする。  
+**EncoderMode**をA相,B相があるエンコーダー(e.g. AMT102,AMT103,etc)では**Encoder Mode TI1 and TI2**に設定する。  
+カウントの方向は**Prrameter for Channel x**の片方の**Polarity**を変更することで変えられる。
+![Configration](./Picture/Configration.png)
 
 ---
 # Encoder(TIM_HandleTypeDef *timer);
@@ -28,5 +36,30 @@
 ---
 # 使用例
 
+```c:wrapper.hpp
+#include"encoder.hpp"
+
+Encoder encoder(&htim3);
+
+void init(void){
+	encoder.init();
+	encoder.start();
+}
+
+void loop(){
+	static int32_t count = 0; 
+	encoder.update();
+	count = encoder.getCount();
+	if(resetCondition){
+		encoder.resetCount();
+	}
+	if(endCondition){
+		encoder.stop();
+		break;
+	}
+}
+```
+
 ---
 2019/10/16 created by satoshi ohya(conatus.11099@gmail.com)
+2019/10/c3 edited by satoshi ohya
